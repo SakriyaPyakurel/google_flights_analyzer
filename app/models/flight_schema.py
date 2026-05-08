@@ -6,3 +6,4 @@ class FlightSearchRequest(BaseModel):
     destination:str 
     depart_date:str 
     return_date:Optional[str] = None
+    timer:bool=False
