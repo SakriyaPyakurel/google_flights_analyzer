@@ -26,7 +26,7 @@ def train_model(request_data: TrainRequest, request: Request):
             )
         filename = request_data.csv_path 
         if not filename.endswith(".csv"):
-            filename+="csv" 
+            filename+=".csv" 
         filepath = os.path.join(request.app.state.base_dir,filename)
         if not os.path.exists(filepath):
               raise HTTPException(status_code=404,
@@ -43,7 +43,7 @@ def train_model(request_data: TrainRequest, request: Request):
     df = prepare_features(df)
 
     trainer = FlightPriceTrainer()
-    metrics = trainer.train(df)
+    metrics = trainer.train(df,tuner=True) if request_data.tune else trainer.train(df)
     if request_data.source == "csv":
         if not request_data.pkl_path:
            trainer.save()
