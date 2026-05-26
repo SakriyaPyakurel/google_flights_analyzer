@@ -9,16 +9,30 @@ def prepare_features(df: pd.DataFrame):
     df["trip_length"] = (
         df["return_date"] - df["departure_date"]
     ).dt.days
-
+    
+    # Departure features
+    df["departure_day"] = df["departure_date"].dt.day
+    df["departure_month"] = df["departure_date"].dt.month
+    df["departure_dayofweek"] = df["departure_date"].dt.dayofweek
+    df["departure_week"] = df["departure_date"].dt.isocalendar().week.astype(int)
+    # Return features
+    df["return_day"] = df["return_date"].dt.day
+    df["return_month"] = df["return_date"].dt.month
+    df["return_dayofweek"] = df["return_date"].dt.dayofweek
+    # Times feature
     df["departure_hour"] = pd.to_datetime(
         df["departure_time"]
     ).dt.hour
-
     df["arrival_hour"] = pd.to_datetime(
         df["arrival_time"]
     ).dt.hour
-
-    df["departure_dayofweek"] = df["departure_date"].dt.dayofweek
-    df["departure_month"] = df["departure_date"].dt.month
-
+    # Indicator of weekend
+    df["is_weekend_departure"] = (
+        df["departure_dayofweek"] >= 5
+    ).astype(int)
+     # Route feature
+    df["route"] = (
+        df["origin"] + "_" + df["destination"]
+    )
+    df.drop_duplicates(inplace=True)
     return df
