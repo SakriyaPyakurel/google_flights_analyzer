@@ -57,6 +57,7 @@ async def search_flights(request:FlightSearchRequest,req:Request):
             "arrival_time": flight.get("arrival_time"),
             "duration(in minutes)":  duration_to_minutes(flight.get("duration")),
             "price":flight.get('price'),
+            "scrape_at":flight.get('scrape_time'),
             "currency":flight.get('currency')
         }
         for flight in parsed_flights
