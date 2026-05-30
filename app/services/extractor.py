@@ -42,7 +42,7 @@ class FlightExtractor:
           #extracting flight info
           cards = await page.locator("div[aria-label]").all()
           for card in cards:
-             aria = await card.get_attribute("aria-label") 
+             aria = await card.get_attribute("aria-label",timeout=2000) 
              if not aria:
                 continue
              text = aria.lower()

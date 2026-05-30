@@ -1,11 +1,10 @@
 import re
-
+from datetime import datetime
 def clean_time(t):
     if not t:
         return None 
     return t.replace("\u202f", " ").strip()
 class FlightParser:
-
     @staticmethod
     def parse(text: str) -> dict:
         data = {}
@@ -47,5 +46,7 @@ class FlightParser:
 
         data["layover_durations"] = layover_durations or []
         data["layover_airports"] = layover_airports or []
+
+        data["scrape_time"] = datetime.now().strftime("%Y-%m-%d")
 
         return data

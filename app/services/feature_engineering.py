@@ -30,9 +30,15 @@ def prepare_features(df: pd.DataFrame):
     df["is_weekend_departure"] = (
         df["departure_dayofweek"] >= 5
     ).astype(int)
-     # Route feature
-    df["route"] = (
-        df["origin"] + "_" + df["destination"]
-    )
+     # Airline stop interaction feature
+    df["airline_stop"] = (
+    df["airline"] + "_" +
+    df["stops"].astype(str)
+)
+    
+    df["scraped_at"] = pd.to_datetime(df["scrape_time"])
+    df["days_until_departure"] = (
+    df["departure_date"] - df["scraped_at"]
+).dt.days
     df.drop_duplicates(inplace=True)
     return df

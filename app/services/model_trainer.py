@@ -10,14 +10,14 @@ class FlightPriceTrainer:
     def __init__(self):
         self.model = None 
     def train(self,df,tuner:bool=False):
+        df["price"] = df["price"].fillna(df["price"].median())
+        df = df.dropna(axis=0)
         target = "price" 
         features = [
             "origin",
             "destination",
-            "airline",
             "origin_airport",
             "destination_airport",
-            "route",
             "trip_length",
             "departure_hour",
             "arrival_hour",
@@ -28,8 +28,10 @@ class FlightPriceTrainer:
             "return_day",
             "return_month",
             "return_dayofweek",
-            "stops",
-            "duration(in minutes)"
+            "airline_stop",
+            "duration(in minutes)",
+            "is_weekend_departure",
+            "days_until_departure"
         ]
 
         X = df[features]
@@ -41,12 +43,12 @@ class FlightPriceTrainer:
         )
 
         categorical = [
-            "airline",
             "origin",
             "destination",
             "origin_airport",
             "destination_airport",
-            "route"
+            "airline_stop",
+            "is_weekend_departure"
         ]
 
         numeric = [
@@ -60,8 +62,8 @@ class FlightPriceTrainer:
             "return_day",
             "return_month",
             "return_dayofweek",
-            "stops",
-            "duration(in minutes)"
+            "duration(in minutes)",
+            "days_until_departure"
         ]
 
         preprocessor = ColumnTransformer([
@@ -112,7 +114,9 @@ class FlightPriceTrainer:
         # evaluation
         return {
             "mae":mean_absolute_error(Y_test,preds),
-            "r2":r2_score(Y_test,preds) 
+            "r2":r2_score(Y_test,preds),
+            "best_params": None if not tuner else grid.best_params_,
+            "best_score":None if not tuner else grid.best_score_
         }
     
     def save(self,path="flight_models/flight_price_model.pkl"):
