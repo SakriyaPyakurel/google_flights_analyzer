@@ -10,7 +10,10 @@ class FlightPriceTrainer:
     def __init__(self):
         self.model = None 
     def train(self,df,tuner:bool=False):
-        df["price"] = df["price"].fillna(df["price"].median())
+        npr_median = df.loc[df["price"].notna() & (df["currency"] == "NPR"), "price"].median()
+        usd_median = df.loc[df["price"].notna() & (df["currency"] == "USD"), "price"].median()
+        df.loc[df["currency"] == "NPR", "price"] = df.loc[df["currency"] == "NPR", "price"].fillna(npr_median)
+        df.loc[df["currency"] == "USD", "price"] = df.loc[df["currency"] == "USD", "price"].fillna(usd_median)
         df = df.dropna(axis=0)
         target = "price" 
         features = [
