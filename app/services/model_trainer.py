@@ -10,11 +10,7 @@ class FlightPriceTrainer:
     def __init__(self):
         self.model = None 
     def train(self,df,tuner:bool=False):
-        npr_median = df.loc[df["price"].notna() & (df["currency"] == "NPR"), "price"].median()
-        usd_median = df.loc[df["price"].notna() & (df["currency"] == "USD"), "price"].median()
-        df.loc[df["currency"] == "NPR", "price"] = df.loc[df["currency"] == "NPR", "price"].fillna(npr_median)
-        df.loc[df["currency"] == "USD", "price"] = df.loc[df["currency"] == "USD", "price"].fillna(usd_median)
-        df = df.dropna(axis=0)
+        df["price"] = df["price"].fillna(df["price"].median())
         target = "price" 
         features = [
             "origin",
@@ -34,7 +30,13 @@ class FlightPriceTrainer:
             "airline_stop",
             "duration(in minutes)",
             "is_weekend_departure",
-            "days_until_departure"
+            "days_until_departure",
+            "has_return",
+            "route",
+            "route_airline",
+            "stops",
+            "duration_per_stop",
+            "departure_period"
         ]
 
         X = df[features]
@@ -51,7 +53,11 @@ class FlightPriceTrainer:
             "origin_airport",
             "destination_airport",
             "airline_stop",
-            "is_weekend_departure"
+            "is_weekend_departure",
+            "has_return",
+            "route",
+            "route_airline",
+            "departure_period"
         ]
 
         numeric = [
@@ -66,7 +72,9 @@ class FlightPriceTrainer:
             "return_month",
             "return_dayofweek",
             "duration(in minutes)",
-            "days_until_departure"
+            "days_until_departure",
+            "stops",
+            "duration_per_stop"
         ]
 
         preprocessor = ColumnTransformer([

@@ -15,7 +15,7 @@ class FlightParser:
         if "Nepalese rupees" in text:
             data["currency"] = "NPR"
         else:
-            data["currency"] = "USD"
+            data["currency"] = None
 
         if "Nonstop" in text:
             data["stops"] = 0
